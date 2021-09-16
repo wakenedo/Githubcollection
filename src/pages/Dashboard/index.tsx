@@ -24,6 +24,7 @@ export const Dashboard: React.FC = () => {
   });  
   const [newRepo, setNewRepo] = React.useState('');
   const [inputError, setInputError] = React.useState('');
+  const formEl = React.useRef<HTMLFormElement | null>(null);
 
   React.useEffect(() => {
       localStorage.setItem('@GitCollection:repositories', JSON.stringify(repos));
@@ -42,22 +43,32 @@ export const Dashboard: React.FC = () => {
           setInputError('Type the username/repository');
           return;
       }
-      const response = await api.get<GithubRepository>(`repos/${newRepo}`);
 
-      console.log(response)
 
-      const repository = response.data;
-      
-      
-      setRepos([...repos, repository]);
-      setNewRepo('')
+      try {
+        const response = await api.get<GithubRepository>(`repos/${newRepo}`);
+  
+        const repository = response.data;
+                
+        setRepos([...repos, repository]);
+        formEl.current?.reset();
+        setNewRepo('')
+        setInputError('');  
+          
+      } catch {
+        setInputError('Repository not found on Github');  
+      }
   }
   
   return  (
       <>
       {/*<img src={Logo} alt='GitCollection'/>*/}
       <Title>Github Catalog</Title>
-      <Form hasError={Boolean(inputError)} onSubmit={handleAddRepo}>
+      <Form 
+        ref={formEl} 
+        hasError={Boolean(inputError)} 
+        onSubmit={handleAddRepo}
+      >
           <input placeholder='username/repository_name' 
           onChange={handleInputChange}/>
           <button type='submit'>Search</button>
