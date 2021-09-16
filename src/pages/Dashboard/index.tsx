@@ -1,7 +1,8 @@
 import React from 'react';
-import {api} from '../../services/api'
-import {Title, Form, Repos, Error} from './styles';
-import {FiChevronRight} from 'react-icons/fi'
+import { api } from '../../services/api';
+import { Link } from 'react-router-dom';
+import { Title, Form, Repos, Error } from './styles';
+import { FiChevronRight } from 'react-icons/fi'
 
 
 interface GithubRepository {
@@ -66,7 +67,9 @@ export const Dashboard: React.FC = () => {
 
       <Repos>
         {repos.map(repository => (
-            <a href='/repositories' key={repository.full_name}>
+            <Link
+                to={`/repositories/${repository.full_name}`} 
+                key={repository.full_name}>
             <img 
                 src={repository.owner.avatar_url} 
                 alt={repository.owner.login}
@@ -76,7 +79,7 @@ export const Dashboard: React.FC = () => {
                 <p>{repository.description}</p>
             </div>
             <FiChevronRight size={20}/>
-        </a>
+        </Link>
         ))}
 
       </Repos>
